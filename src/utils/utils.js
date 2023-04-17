@@ -8,10 +8,11 @@ export const strToCurrency = (str) => {
 }
 
 export const getDiscounts = (price, discount) => {
+
     const discountPrice = price * (discount / 100)
 
     return {
         appliedDiscount: discount,
-        discountAmount: parseFloat(discountPrice).toFixed(2)
+        price: parseFloat(discountPrice).toFixed(2)
     }
 }

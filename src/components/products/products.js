@@ -7,11 +7,16 @@ const Products = ({ menuItems }) => {
     const orderItems = useCartStore(state => state.orderItems)
     const { addToOrder } = useCartStore()
 
-    const onHandleAddItem = (menuItem, itemIndex) => {
-        const selectedItem = [
-            {...menuItem, selected: true}
-        ]
-        setItems(selectedItem)
+    const onHandleAddSandwich = (menuItem, itemIndex) => {
+        const updatedItems = menuItems.map((item, index) => {
+            if(itemIndex === index) {
+                item.selected = true
+            }
+
+            return item
+        })
+
+        setItems(updatedItems)
         addToOrder([...orderItems, menuItem])
     }
 
@@ -22,7 +27,7 @@ const Products = ({ menuItems }) => {
                     key={item.name}
                     menuItem={item}
                     itemIndex={index}
-                    onHandleAddItem={onHandleAddItem}/>
+                    onHandleAddItem={ onHandleAddSandwich }/>
             ))}
         </div>
     );

@@ -8,13 +8,13 @@ import { getDiscounts } from "@/utils/utils";
 
 const menu = {
     sandwiches: [
-        { name: "X Burguer", price: "5.00", type: "sandwich", selected: false },
-        { name: "X Egg", price: "4.50", type: "sandwich", selected: false },
-        { name: "X Bacon", price: "7.00", type: "sandwich", selected: false },
+        { name: "X Burguer", price: "5.00", type: "sandwich" },
+        { name: "X Egg", price: "4.50", type: "sandwich"},
+        { name: "X Bacon", price: "7.00", type: "sandwich"},
     ],
     extras: [
-      { name: "Fries", price: "2.00", type: "extra_fries", selected: false },
-      { name: "Soft drink", price: "2.50", type: "extra_softDrink", selected: false }
+      { name: "Fries", price: "2.00", type: "extra_fries"},
+      { name: "Soft drink", price: "2.50", type: "extra_softDrink"}
     ],
 };
 
@@ -24,6 +24,7 @@ export default function Home() {
   const orderItems = useCartStore((state) => state.orderItems);
   const prices = orderItems?.map((item) => Number(item.price));
   const orderItemsTypes = orderItems?.map((item) => item.type);
+  const colorBtnVal = orderItems.length > 0 ? 'bg-violet-900' : 'bg-violet-400'
   const totalPrice = prices?.reduce(
     (accumulator, currentPrice) => accumulator + currentPrice,
     null
@@ -34,28 +35,28 @@ export default function Home() {
   };
 
   const handleDiscount = (types, totalPrice) => {
-    const items = ["sandwich", "extra_fries", "extra_softDrink"];
-    const discounts = { twenty: 20, fifteen: 15, ten: 10 };
-    const discount = items.reduce(
-      (acc, item) => (types.includes(item) ? acc + 1 : acc),
-      0
-    );
+      const discounts = { twenty: 20, fifteen: 15, ten: 10 }
 
-    switch (discount) {
-      case 0:
-        totalPrice = getDiscounts(totalPrice, discounts.ten);
-        break;
-      case 1:
-        totalPrice = getDiscounts(totalPrice, discounts.fifteen);
-        break;
-      case 2:
-        totalPrice = getDiscounts(totalPrice, discounts.twenty);
-        break;
-      case 3:
-        break;
-    }
+      if(types.includes('sandwich' && 'extra_fries' && 'extra_softDrink')) {
+        const { appliedDiscount, price } = getDiscounts(totalPrice, discounts.twenty)
 
-    return totalPrice;
+        return { appliedDiscount, price }
+
+      } else if(types.includes('sandwich' && 'extra_softDrink')) {
+        const { appliedDiscount, price } = getDiscounts(totalPrice, discounts.fifteen)
+
+        return { appliedDiscount, price }
+
+      } else if(types.includes('sandwich' && 'extra_fries')) {
+        const { appliedDiscount, price } = getDiscounts(totalPrice, discounts.ten)
+
+        return { appliedDiscount, price }
+      }
+
+      return {
+        appliedDiscount: null,
+        price: totalPrice
+      }
   };
 
   return (
@@ -92,7 +93,8 @@ export default function Home() {
         ) : null}
       </div>
       <button
-        className="px-6 py-2 mt-12 bg-violet-900 text-white"
+        className={`px-6 py-2 mt-12 ${colorBtnVal} text-white`}
+        disabled={orderItems.length === 0}
         onClick={() => setShowModal(true)}>
         Check your order
       </button>

@@ -8,7 +8,8 @@ const OrderModal = ({ setShowModal, orderItems, totalPrice, discounts }) => {
   const [customerName, setCustomerName] = useState('')
   const ordersHistory = useOrdersStore(state => state.ordersHistory)
   const { updateOrders } = useOrdersStore()
-  const finalPrice = (totalPrice - discounts.discountAmount)
+  const finalPrice = (totalPrice - Number(discounts.price))
+  const colorBtnVal = customerName === '' ? 'bg-violet-400' : 'bg-violet-900'
 
   const handleChange = (event) => (setCustomerName(event.target.value))
 
@@ -18,7 +19,7 @@ const OrderModal = ({ setShowModal, orderItems, totalPrice, discounts }) => {
       totalOrderPrice: totalPrice,
       finalPrice: finalPrice,
       customerName: customerName
-  }
+    }
     updateOrders([...ordersHistory, orderObj])
     setShowModal(false)
   }
@@ -49,16 +50,22 @@ const OrderModal = ({ setShowModal, orderItems, totalPrice, discounts }) => {
               })}
               <p className='inline-flex flex-row items-center justify-between w-full'>
                   <span className='text-lg font-bold pt-4'>Discount applied: </span>
-                  <span>%{discounts.appliedDiscount}</span>
+                  <span>{discounts.appliedDiscount ? `%${discounts.appliedDiscount}` : '--'}</span>
               </p>
               <p className='inline-flex flex-row items-center justify-between w-full'>
                   <span className='text-lg font-bold'>Discount: </span>
-                  <span>{strToCurrency(discounts.discountAmount)}</span>
+                  <span>{discounts.appliedDiscount ? strToCurrency(discounts.price) : '--'}</span>
               </p>
               <p className='inline-flex flex-row items-center justify-between w-full'>
-                  <span className="text-lg font-bold pb-4">Total: </span>
+                  <span className="text-lg font-bold">Total before: </span>
                   <span>
-                    {strToCurrency(finalPrice)}
+                    {strToCurrency(totalPrice)}
+                  </span>
+              </p>
+              <p className='inline-flex flex-row items-center justify-between w-full'>
+                  <span className="text-lg font-bold pb-4">Total after: </span>
+                  <span>
+                    {discounts.price ? strToCurrency(finalPrice) : strToCurrency(totalPrice)}
                   </span>
               </p>
             </div>
@@ -83,7 +90,8 @@ const OrderModal = ({ setShowModal, orderItems, totalPrice, discounts }) => {
               Close
             </button>
             <button
-              className="px-6 py-2  bg-violet-900 text-white"
+              className={`px-6 py-2 ${colorBtnVal} text-white`}
+              disabled={customerName === ''}
               type="button"
               onClick={handleSendOrder}>
               Send order

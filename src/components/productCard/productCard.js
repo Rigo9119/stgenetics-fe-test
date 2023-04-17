@@ -13,8 +13,8 @@ const ProductCard = ({ menuItem, itemIndex, onHandleAddItem }) => {
   const textVal = selected ? 'Item added' : 'Add to order'
 
   return (
-    <div className='flex flex-row items-center justify-between mb-6 w-7/12'>
-      <div className={`flex flex-col items-center justify-between border ${colorBorderVal} w-8/12`}>
+    <div className='flex flex-row items-center justify-between mb-6 w-8/12'>
+      <div className={`flex flex-col items-center justify-between border ${colorBorderVal} w-7/12`}>
         <span className='flex flex-row items-center justify-between py-4 w-10/12'>
           <p className='text-base font-semibold'>
             {name}:
@@ -24,8 +24,9 @@ const ProductCard = ({ menuItem, itemIndex, onHandleAddItem }) => {
           </p>
         </span>
       </div>
-      <div className='flex flex-row items-center justify-items-start w-3/12'>
-        <button 
+      <div className='flex flex-row items-center justify-items-start w-4/12'>
+        <button
+          disabled={selected}
           className={`px-8 py-4 ${colorBkgVal} text-white font-semibold w-full`}
           onClick={() => onHandleAddItem(menuItem, itemIndex)}>
           {textVal}
