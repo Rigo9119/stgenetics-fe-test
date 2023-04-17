@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Filters from "@/components/filters/filters";
 import Products from "@/components/products/products";
 import OrderModal from "@/components/modal/orderModal";
@@ -18,9 +18,13 @@ const menu = {
     ],
 };
 
+const ERROR_MESAGE = 'Your order has more than one sandwich, fries or soda please restart your order';
+
 export default function Home() {
+  const [menuItems, setMenuItems] = useState(menu)
   const [showModal, setShowModal] = useState(false);
   const [showMenu, setShowMenu] = useState("all");
+  const { cleanOrder } = useCartStore()
   const orderItems = useCartStore((state) => state.orderItems);
   const prices = orderItems?.map((item) => Number(item.price));
   const orderItemsTypes = orderItems?.map((item) => item.type);
@@ -29,6 +33,11 @@ export default function Home() {
     (accumulator, currentPrice) => accumulator + currentPrice,
     null
   );
+  const checkOrder = orderItems.some((item, index) => {
+    return orderItems.findIndex(
+      (order) => order.type === item.type && index !== orderItems.indexOf(order)
+    ) !== -1
+  })
 
   const onHandleFilterMenu = (event) => {
     setShowMenu(event.target.value);
@@ -59,6 +68,11 @@ export default function Home() {
       }
   };
 
+  const handleRestartOrder = () => {
+    location.reload()
+    cleanOrder()
+  }
+
   return (
     <main className="flex flex-col items-center justify-between px-12 py-8">
       <div className="flex flex-col items-center justify-between w-full">
@@ -66,21 +80,21 @@ export default function Home() {
         {showMenu === "all" ? (
           <>
             <h1 className="text-lg font-bold py-8">Our Menu</h1>
-            <Products menuItems={menu.sandwiches} />
+            <Products menuItems={menuItems.sandwiches} />
             <h2 className="text-lg font-semibold  py-6 my-8">Extras</h2>
-            <Products menuItems={menu.extras} />
+            <Products menuItems={menuItems.extras} />
           </>
         ) : null}
         {showMenu === "sandwiches" ? (
           <>
             <h1 className="text-lg font-bold py-8">Our Menu</h1>
-            <Products menuItems={menu.sandwiches} />
+            <Products menuItems={menuItems.sandwiches} />
           </>
         ) : null}
         {showMenu === "extras" ? (
           <>
             <h2 className="text-lg font-semibold  py-6 my-8">Extras</h2>
-            <Products menuItems={menu.extras} />
+            <Products menuItems={menuItems.extras} />
           </>
         ) : null}
         {showModal ? (
@@ -91,13 +105,26 @@ export default function Home() {
             setShowModal={setShowModal}
           />
         ) : null}
+
+        {checkOrder ? (
+          <h3 className='text-center py-4 font-bold text-lg text-rose-600'>{ERROR_MESAGE}</h3>
+        ) : null}
       </div>
-      <button
-        className={`px-6 py-2 mt-12 ${colorBtnVal} text-white`}
-        disabled={orderItems.length === 0}
-        onClick={() => setShowModal(true)}>
-        Check your order
-      </button>
+      {checkOrder ? (
+          <button
+            className={`px-6 py-2 ml-4 bg-rose-600 text-white`}
+            type="button"
+            onClick={handleRestartOrder}>
+            Restart order
+          </button>
+      ) : (
+        <button
+            className={`px-6 py-2 mt-12 ${colorBtnVal} text-white`}
+            disabled={orderItems.length === 0}
+            onClick={() => setShowModal(true)}>
+            Check your order
+        </button>
+      )}
     </main>
   );
 }
