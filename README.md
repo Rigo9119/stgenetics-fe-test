@@ -10,7 +10,11 @@ The projects has to pages:
 
 ## Getting Started
 
-First, run the development server:
+First, download the repo and then run:
+ ```bash 
+yarn install
+```
+After you can proceed and run the development server:
 
 ```bash
 yarn dev
@@ -20,8 +24,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 
 ## Tech stack
-- React Js
+- React Js 
 - Next Js
-- Tailwind CSS
-- Zustand
+- Tailwind CSS (styles)
+- Zustand (state management)
 
+## Things that i should have manage better 
+
+- Apply typescript to the project would have improve the development
+- there are some ```js location.reload()``` in some actions with more time I could figure it out how to manage the 
+state changes
